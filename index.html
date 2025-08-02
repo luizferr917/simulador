@@ -4,19 +4,32 @@
   <meta charset="UTF-8">
   <title>Simulador de Financiamento</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      margin: 40px;
+    * {
+      box-sizing: border-box;
     }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: url('1000020994.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
     .form-container {
-      background: white;
+      background: rgba(255, 255, 255, 0.95);
       padding: 30px;
       max-width: 450px;
-      margin: auto;
+      width: 90%;
       border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      text-align: center;
     }
+
     input, button {
       width: 100%;
       padding: 12px;
@@ -25,6 +38,7 @@
       border: 1px solid #ccc;
       font-size: 16px;
     }
+
     button {
       background-color: #007BFF;
       color: white;
@@ -32,27 +46,39 @@
       border: none;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #0056b3;
     }
+
     .resultado {
       margin-top: 20px;
       font-size: 18px;
       font-weight: bold;
       color: #004d40;
     }
+
     .link-final {
       margin-top: 25px;
       font-size: 16px;
       color: #000;
     }
+
     .link-final a {
       color: #007BFF;
       text-decoration: none;
       font-weight: bold;
     }
+
     .link-final a:hover {
       text-decoration: underline;
+    }
+
+    label {
+      text-align: left;
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -60,8 +86,12 @@
 
   <div class="form-container">
     <h2>Simulador de Financiamento</h2>
+    
     <label for="renda">Renda Bruta Mensal (R$):</label>
     <input type="number" id="renda" placeholder="Ex: 5000" step="0.01">
+    
+    <label for="entrada">Valor de Entrada (R$):</label>
+    <input type="number" id="entrada" placeholder="Ex: 20000" step="0.01">
 
     <button onclick="calcularFinanciamento()">Calcular</button>
 
@@ -71,6 +101,7 @@
   <script>
     function calcularFinanciamento() {
       const renda = parseFloat(document.getElementById("renda").value);
+      const entrada = parseFloat(document.getElementById("entrada").value) || 0;
       const percentual = 0.3;
       const juros = 0.0075; // 0,75% ao mês
       const parcelas = 360; // 30 anos
@@ -83,13 +114,15 @@
       const parcelaMaxima = renda * percentual;
       const fator = (1 - Math.pow(1 + juros, -parcelas)) / juros;
       const valorFinanciado = parcelaMaxima * fator;
+      const valorTotal = valorFinanciado + entrada;
 
       document.getElementById("resultado").innerHTML = `
         Parcela máxima estimada: <strong>R$ ${parcelaMaxima.toFixed(2)}</strong><br><br>
-        Valor de financiamento possível: <strong>R$ ${valorFinanciado.toFixed(2)}</strong><br><br>
+        Valor de financiamento possível: <strong>R$ ${valorFinanciado.toFixed(2)}</strong><br>
+        Valor total do imóvel (incluindo entrada): <strong>R$ ${valorTotal.toFixed(2)}</strong><br><br>
         <div class="link-final">
           Quer saber imóveis nessa faixa de valor? 
-          <a href="https://wa.me/5542999457158?text=Olá,%20vi%20a%20simulação%20e%20quero%20ver%20opções%20até%20R$%20${valorFinanciado.toFixed(0)}">Clique aqui</a>
+          <a href="https://wa.me/5542999457158?text=Olá,%20vi%20a%20simulação%20e%20quero%20ver%20opções%20até%20R$%20${valorTotal.toFixed(0)}">Clique aqui</a>
         </div>
       `;
     }
