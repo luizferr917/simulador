@@ -3,26 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <title>Simulador de Financiamento</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
+      font-family: 'Lato', sans-serif;
     }
 
     body {
       margin: 0;
       padding: 0;
-      font-family: Lato;
-      background: linear-gradient(to botom right#1F4F38, #92ADA8);
+      background: linear-gradient(to bottom right, #1F4F38, #92ADA8);
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
     }
 
     .form-container {
       background: rgba(255, 255, 255, 0.95);
-      padding: 30px;
-      max-width: 450px;
+      padding: 35px;
+      max-width: 500px;
       width: 90%;
       border-radius: 12px;
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -44,6 +45,7 @@
       font-weight: bold;
       border: none;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
 
     button:hover {
@@ -51,16 +53,24 @@
     }
 
     .resultado {
-      margin-top: 20px;
-      font-size: 18px;
+      margin-top: 25px;
+      font-size: 16px;
       font-weight: bold;
       color: #004d40;
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    .resultado strong {
+      color: #007BFF;
+      white-space: nowrap;
     }
 
     .link-final {
-      margin-top: 25px;
-      font-size: 16px;
+      margin-top: 20px;
+      font-size: 14px;
       color: #000;
+      line-height: 1.5;
     }
 
     .link-final a {
@@ -76,8 +86,23 @@
     label {
       text-align: left;
       display: block;
-      margin-top: 10px;
+      margin-top: 15px;
       font-weight: bold;
+    }
+    
+    .disclaimer {
+      font-style: italic;
+      font-size: 13px;
+      margin: 15px 0;
+    }
+    
+    .disclaimer::before {
+      content: "* ";
+    }
+    
+    .valor {
+      display: inline-block;
+      min-width: 150px;
     }
   </style>
 </head>
@@ -98,6 +123,15 @@
   </div>
 
   <script>
+    function formatarMoeda(valor) {
+      return valor.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
     function calcularFinanciamento() {
       const renda = parseFloat(document.getElementById("renda").value);
       const entrada = parseFloat(document.getElementById("entrada").value) || 0;
@@ -116,12 +150,12 @@
       const valorTotal = valorFinanciado + entrada;
 
       document.getElementById("resultado").innerHTML = `
-        Parcela máxima estimada: <strong>R$ ${parcelaMaxima.toFixed(2)}</strong><br><br>
-        Valor de financiamento possível: <strong>R$ ${valorFinanciado.toFixed(2)}</strong><br>
-        Valor total do imóvel (incluindo entrada): <strong>R$ ${valorTotal.toFixed(2)}</strong><br><br>
-        <div class="link-final"> Valores podem se alterar de acordo com a avaliação do imóvel ou seu subsídio
-        Quer saber imóveis nessa faixa de valor? 
-          <a href="https://wa.me/5542999457158?text=Olá,%20vi%20a%20simulação%20e%20gostaria%20de%20ver%20opções%20até%20R$%20${valorTotal.toFixed(0)}">Clique aqui</a>
+        <div>Parcela máxima estimada: <strong class="valor">${formatarMoeda(parcelaMaxima)}</strong></div>
+        <div>Valor de financiamento possível: <strong class="valor">${formatarMoeda(valorFinanciado)}</strong></div>
+        <div>Valor total do imóvel (incluindo entrada): <strong class="valor">${formatarMoeda(valorTotal)}</strong></div>
+        <div class="disclaimer">Valores podem se alterar de acordo com a avaliação do imóvel ou seu subsídio</div>
+        <div class="link-final">Quer saber imóveis nessa faixa de valor? 
+          <a href="https://wa.me/5542999457158?text=Olá,%20vi%20a%20simulação%20e%20gostaria%20de%20ver%20opções%20até%20${formatarMoeda(valorTotal)}">Clique aqui</a>
         </div>
       `;
     }
@@ -129,6 +163,7 @@
 
 </body>
 </html>
+
 
 
 
