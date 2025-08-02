@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Simulador de Financiamento</title>
+  <title>Simulador de Financiamento - CAIXA</title>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
   <style>
     * {
@@ -109,10 +109,10 @@
 <body>
 
   <div class="form-container">
-    <h2>Simulador de Financiamento</h2>
+    <h2>Simulador de Financiamento - CAIXA</h2>
     
     <label for="renda">Renda Bruta Mensal (R$):</label>
-    <input type="number" id="renda" placeholder="Ex: 5000" step="0.01">
+    <input type="number" id="renda" placeholder="Ex: 8000" step="0.01">
     
     <label for="entrada">Valor de Entrada (R$):</label>
     <input type="number" id="entrada" placeholder="Ex: 20000" step="0.01">
@@ -132,12 +132,17 @@
       });
     }
 
+    function converterTaxaAnualParaMensal(taxaAnual) {
+      return Math.pow(1 + taxaAnual, 1/12) - 1;
+    }
+
     function calcularFinanciamento() {
       const renda = parseFloat(document.getElementById("renda").value);
       const entrada = parseFloat(document.getElementById("entrada").value) || 0;
-      const percentual = 0.3;
-      const juros = 0.0079; // 0,79% ao mês
-      const parcelas = 420; // 35 anos
+      const percentual = 0.3; // 30% da renda
+      const taxaAnual = 0.1047; // 10,47% a.a. (taxa atual CAIXA)
+      const taxaMensal = converterTaxaAnualParaMensal(taxaAnual);
+      const parcelas = 420; // 35 anos (420 meses)
 
       if (isNaN(renda) || renda <= 0) {
         document.getElementById("resultado").innerText = "Por favor, digite uma renda válida.";
@@ -145,17 +150,17 @@
       }
 
       const parcelaMaxima = renda * percentual;
-      const fator = (1 - Math.pow(1 + juros, -parcelas)) / juros;
-      const valorFinanciado = parcelaMaxima * fator;
+      const fatorFinanciamento = (1 - Math.pow(1 + taxaMensal, -parcelas)) / taxaMensal;
+      const valorFinanciado = parcelaMaxima * fatorFinanciamento;
       const valorTotal = valorFinanciado + entrada;
 
       document.getElementById("resultado").innerHTML = `
-        <div>Parcela máxima estimada: <strong class="valor">${formatarMoeda(parcelaMaxima)}</strong></div>
-        <div>Valor de financiamento possível: <strong class="valor">${formatarMoeda(valorFinanciado)}</strong></div>
-        <div>Valor total do imóvel (incluindo entrada): <strong class="valor">${formatarMoeda(valorTotal)}</strong></div>
-        <div class="disclaimer">Valores podem se alterar de acordo com a avaliação do imóvel ou seu subsídio</div>
-        <div class="link-final">Quer saber imóveis nessa faixa de valor? 
-          <a href="https://wa.me/5542999457158?text=Olá,%20vi%20a%20simulação%20e%20gostaria%20de%20ver%20opções%20até%20${formatarMoeda(valorTotal)}">Clique aqui</a>
+        <div>Parcela máxima (30% da renda): <strong class="valor">${formatarMoeda(parcelaMaxima)}</strong></div>
+        <div>Valor financiável: <strong class="valor">${formatarMoeda(valorFinanciado)}</strong></div>
+        <div>Valor total do imóvel: <strong class="valor">${formatarMoeda(valorTotal)}</strong></div>
+        <div class="disclaimer">Valores podem variar conforme avaliação do imóvel e condições do contrato</div>
+        <div class="link-final">Quer simular com um corretor? 
+          <a href="https://wa.me/5542999457158?text=Olá,%20gostaria%20de%20simular%20um%20financiamento%20para%20um%20imóvel%20de%20${formatarMoeda(valorTotal)}%20(renda%20de%20${formatarMoeda(renda)})">Fale conosco</a>
         </div>
       `;
     }
@@ -163,6 +168,7 @@
 
 </body>
 </html>
+
 
 
 
