@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulação de Financiamento Imobiliário</title>
-    <!-- Adicione isso para prevenir cache -->
+    <title>Simulação de Financiamento</title>
+    <!-- Meta tags para prevenir cache -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    
     <style>
-        /* Seu CSS permanece exatamente igual */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -33,34 +31,251 @@
             margin: 20px 0;
         }
         
-        /* ... (restante do seu CSS permanece igual) ... */
+        h1 {
+            color: #1e5631;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #1e5631;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+        
+        button {
+            background-color: #1e5631;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        button:hover {
+            background-color: #4CAF50;
+        }
+        
+        #resultado {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .valor {
+            color: #1e5631;
+            font-size: 1.1em;
+        }
+        
+        .disclaimer {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 15px;
+            font-style: italic;
+        }
+        
+        .link-final {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #25D366;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .link-final a {
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
+    <!-- Verificação de duplicação -->
+    <script>
+        if (window.pageLoaded) {
+            document.body.innerHTML = '';
+            throw new Error('Página já carregada');
+        }
+        window.pageLoaded = true;
+    </script>
+
     <div class="container">
         <h1>Simulação de Financiamento</h1>
         <form id="simulationForm">
-            <!-- Seu formulário permanece igual -->
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="telefone">Telefone:</label>
+                <input type="tel" id="telefone" name="telefone" placeholder="(42) 99999-9999" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="bairro">Bairro que procura o imóvel:</label>
+                <input type="text" id="bairro" name="bairro" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="renda">Renda familiar total (valor bruto - formal e informal):</label>
+                <input type="number" id="renda" name="renda" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="entrada">Valor da entrada:</label>
+                <input type="number" id="entrada" name="entrada" step="0.01" required>
+            </div>
+            
+            <button type="submit">Realizar Simulação</button>
         </form>
+        
         <div id="resultado"></div>
     </div>
 
-    <!-- Scripts com prevenção de cache -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js?version=1"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js?version=1"></script>
+    <!-- Bibliotecas com parâmetro de versão para evitar cache -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js?v=3.6.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js?v=1.14.16"></script>
 
     <script>
-        // Adicione esta verificação para prevenir duplicação
-        if (!window.simulacaoCarregada) {
-            window.simulacaoCarregada = true;
+        // Verificação adicional contra duplicação
+        if (window.scriptsLoaded) {
+            console.error('Scripts já carregados');
+        } else {
+            window.scriptsLoaded = true;
             
-            // Seu código JavaScript permanece igual aqui
+            // Aplicando máscaras aos campos
             $(document).ready(function(){
                 $('#telefone').mask('(00) 00000-0000');
                 $('#cpf').mask('000.000.000-00', {reverse: true});
             });
 
-            // ... (restante do seu JavaScript) ...
+            function formatarMoeda(valor) {
+                return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
+
+            function calcularParcela(valorFinanciado, taxaAnual, prazoAnos) {
+                const taxaMensal = Math.pow(1 + taxaAnual, 1/12) - 1;
+                const numParcelas = prazoAnos * 12;
+                return valorFinanciado * (taxaMensal * Math.pow(1 + taxaMensal, numParcelas)) / (Math.pow(1 + taxaMensal, numParcelas) - 1);
+            }
+
+            document.getElementById('simulationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Coletar dados do formulário
+                const formData = {
+                    nome: document.getElementById('nome').value,
+                    telefone: document.getElementById('telefone').value.replace(/\D/g, ''),
+                    cpf: document.getElementById('cpf').value.replace(/\D/g, ''),
+                    bairro: document.getElementById('bairro').value,
+                    renda: parseFloat(document.getElementById('renda').value),
+                    entrada: parseFloat(document.getElementById('entrada').value)
+                };
+                
+                // Parâmetros do financiamento
+                const taxaJurosAnual = 0.1047;
+                const prazoAnos = 30;
+                
+                // Cálculos da simulação
+                const parcelaMaxima = formData.renda * 0.3;
+                
+                let valorFinanciado = 0;
+                let valorFinanciadoTeste = formData.renda * 100;
+                let parcelaTeste = calcularParcela(valorFinanciadoTeste, taxaJurosAnual, prazoAnos);
+                
+                while (Math.abs(parcelaTeste - parcelaMaxima) > 1 && valorFinanciadoTeste > 0) {
+                    if (parcelaTeste > parcelaMaxima) {
+                        valorFinanciadoTeste *= 0.99;
+                    } else {
+                        valorFinanciadoTeste *= 1.01;
+                    }
+                    parcelaTeste = calcularParcela(valorFinanciadoTeste, taxaJurosAnual, prazoAnos);
+                }
+                
+                valorFinanciado = valorFinanciadoTeste;
+                const valorTotalImovel = valorFinanciado + formData.entrada;
+                
+                // URL do WhatsApp
+                const whatsappUrl = `https://wa.me/5542999457158?text=Olá,%20gostaria%20de%20simular%20um%20financiamento%20para%20um%20imóvel%20de%20${encodeURIComponent(formatarMoeda(valorTotalImovel))}%20(renda%20de%20${encodeURIComponent(formatarMoeda(formData.renda))}%20e%20entrada%20de%20${encodeURIComponent(formatarMoeda(formData.entrada))})`;
+                
+                // Exibir resultados
+                document.getElementById("resultado").innerHTML = `
+                    <div>Parcela máxima (30% da renda): <strong class="valor">${formatarMoeda(parcelaMaxima)}</strong></div>
+                    <div>Valor financiável: <strong class="valor">${formatarMoeda(valorFinanciado)}</strong></div>
+                    <div>Valor da entrada: <strong class="valor">${formatarMoeda(formData.entrada)}</strong></div>
+                    <div>Valor total do imóvel: <strong class="valor">${formatarMoeda(valorTotalImovel)}</strong></div>
+                    <div class="disclaimer">Valores podem variar conforme avaliação do imóvel e subsídio</div>
+                    <div class="link-final"> Quer conhecer imóveis nessa faixa de preço? 
+                      <a href="${whatsappUrl}" target="_blank">Fale conosco</a>
+                    </div>
+                `;
+                document.getElementById('resultado').style.display = 'block';
+                
+                // Enviar para o Google Sheets
+                enviarParaGoogleSheets({
+                    ...formData,
+                    parcelaMaxima: parcelaMaxima,
+                    valorFinanciado: valorFinanciado,
+                    valorTotalImovel: valorTotalImovel
+                });
+            });
+            
+            function enviarParaGoogleSheets(formData) {
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbwGbFCRdEcFttRu-fESjq3ORAokP1t6yrhCEr5NktSe0OXjeXXLMlh-reldANYT8ITUQQ/exec';
+                
+                fetch(scriptURL, {
+                    method: 'POST',
+                    body: JSON.stringify(formData),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'no-cors'
+                })
+                .then(() => {
+                    console.log('Dados enviados com sucesso');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('resultado').innerHTML += `<div class="disclaimer">Os dados foram processados, mas houve um problema no registro. Entraremos em contato mesmo assim.</div>`;
+                });
+            }
         }
     </script>
 </body>
